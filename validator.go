@@ -936,6 +936,27 @@ func ErrorsByField(e error) map[string]string {
 	return m
 }
 
+// ErrorsByFieldLower returns map of errors of the struct validated
+// by ValidateStruct or empty map if there are no errors. Map keys will be in lower case.
+func ErrorsByLowerField(e error) map[string]string {
+	m := make(map[string]string)
+	if e == nil {
+		return m
+	}
+	// prototype for ValidateStruct
+
+	switch e.(type) {
+	case Error:
+		m[e.(Error).Name] = e.(Error).Err.Error()
+	case Errors:
+		for _, item := range e.(Errors).Errors() {
+			m[strings.ToLower(item.(Error).Name)] = item.(Error).Err.Error()
+		}
+	}
+
+	return m
+}
+
 // Error returns string equivalent for reflect.Type
 func (e *UnsupportedTypeError) Error() string {
 	return "validator: unsupported type: " + e.Type.String()
